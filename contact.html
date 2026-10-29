@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact · Rahul Saxena</title>
+<meta name="description" content="Get in touch with Rahul Saxena about equity research and analyst roles.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contact · Rahul Saxena">
+<meta property="og:description" content="Get in touch with Rahul Saxena about equity research and analyst roles.">
+<script>/* apply the saved light/dark choice before the page draws */try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-site-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231E4FA3'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='13' font-weight='700' text-anchor='middle' fill='%23FFFFFF'%3ERS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<main id="main" class="page" tabindex="-1">
+  <section class="wrap page-head">
+    <p class="label">Contact</p>
+    <h1>Let's talk</h1>
+    <p class="lede">Questions about a role, a research report or anything else in my work are all welcome. Send a message below.</p>
+  </section>
+
+  <section class="wrap contact-grid" aria-label="Contact details and message form">
+    <!-- Left: contact details (filled from the About tab) -->
+    <aside class="panel contact-details" aria-labelledby="details-h">
+      <h2 id="details-h" class="sr-only">Contact details</h2>
+      <dl id="details" class="details-list"></dl>
+      <div id="detail-links" class="detail-links"></div>
+      <p id="details-empty" class="placeholder" hidden>[Contact details will appear here]</p>
+    </aside>
+
+    <!-- Right: the message form -->
+    <div class="panel contact-form-panel">
+      <div id="form-result" aria-live="polite"></div>
+      <form id="contact-form" novalidate>
+        <div id="form-summary" class="form-summary" role="alert" hidden></div>
+
+        <div class="field">
+          <label for="f-name">Your name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="f-name-error">
+          <p id="f-name-error" class="field-error" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="f-email">Your email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-error">
+          <p id="f-email-error" class="field-error" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="f-message">What would you like to talk about?</label>
+          <textarea id="f-message" name="message" rows="5" maxlength="2000" required aria-describedby="f-message-count f-message-error"></textarea>
+          <p id="f-message-count" class="field-count label">0 / 2000</p>
+          <p id="f-message-error" class="field-error" hidden></p>
+        </div>
+
+        <!-- Honeypot: hidden from people, filled in only by spam bots -->
+        <div class="hp" aria-hidden="true">
+          <label for="f-website">Website</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        <button id="send-btn" class="btn btn-gold" type="submit">Send message</button>
+        <div id="form-notice" class="form-notice" aria-live="polite"></div>
+        <p class="privacy-note">Your details are only used to reply to you.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script src="js/config.js"></script>
+<script src="data/sample-data.js"></script>
+<script src="js/sheet.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/contact.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gallery · Rahul Saxena</title>
+<meta name="description" content="Photos and clips from events Rahul Saxena has taken part in.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Gallery · Rahul Saxena">
+<meta property="og:description" content="Photos and clips from events Rahul Saxena has taken part in.">
+<script>/* apply the saved light/dark choice before the page draws */try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-site-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231E4FA3'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='13' font-weight='700' text-anchor='middle' fill='%23FFFFFF'%3ERS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<main id="main" class="page" tabindex="-1">
+  <section class="wrap page-head">
+    <p class="label">Gallery</p>
+    <h1>Events and moments</h1>
+    <p class="lede">Photos and clips from the competitions, conferences, workshops and events I take part in.</p>
+  </section>
+
+  <!-- Big slideshow of photos: slides from left to right on its own; arrows change the photo -->
+  <section id="showcase" class="wrap showcase" aria-roledescription="carousel" aria-label="Photo highlights" hidden>
+    <div class="sc-stage">
+      <div id="sc-slides" class="sc-slides"></div>
+      <button id="sc-prev" class="sc-arrow sc-prev" type="button" aria-label="Previous photo">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button id="sc-next" class="sc-arrow sc-next" type="button" aria-label="Next photo">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="sc-bar">
+        <span id="sc-count" class="sc-count"></span>
+        <button id="sc-pause" class="sc-pause" type="button">Pause</button>
+      </div>
+    </div>
+    <p id="sc-status" class="sr-only" aria-live="polite"></p>
+  </section>
+
+  <section class="wrap" aria-label="Gallery">
+    <div id="gallery-chips" class="chips" role="group" aria-label="Show" hidden></div>
+    <div id="gallery"></div>
+  </section>
+</main>
+
+<!-- Larger view of a photo or clip -->
+<div id="g-lightbox" class="lightbox" role="dialog" aria-modal="true" aria-labelledby="g-title" hidden>
+  <div class="lb-inner panel">
+    <div class="lb-head">
+      <h2 id="g-title"></h2>
+      <button id="g-close" class="btn btn-glass glass" type="button">Close</button>
+    </div>
+    <div id="g-media" class="g-media"></div>
+    <p id="g-caption" class="g-caption"></p>
+    <div class="g-nav">
+      <button id="g-prev" class="btn btn-glass glass" type="button">← Previous</button>
+      <span id="g-count" class="label"></span>
+      <button id="g-next" class="btn btn-glass glass" type="button">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="data/sample-data.js"></script>
+<script src="js/sheet.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/gallery.js"></script>
+</body>
+</html>

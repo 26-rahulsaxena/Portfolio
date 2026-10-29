@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About · Rahul Saxena</title>
+<meta name="description" content="Background, experience, education and skills of Rahul Saxena.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="About · Rahul Saxena">
+<meta property="og:description" content="Background, experience, education and skills of Rahul Saxena.">
+<script>/* apply the saved light/dark choice before the page draws */try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-site-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231E4FA3'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='13' font-weight='700' text-anchor='middle' fill='%23FFFFFF'%3ERS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<main id="main" class="page" tabindex="-1">
+<!-- Two columns on desktop: the photo stays in place on the left while the content on the right scrolls. -->
+<div class="wrap about-layout">
+  <div class="about-photo">
+    <!-- js/face.js puts your photo (or the avatar, or your head-turn media) inside #face-stage -->
+    <div id="face-stage" class="face-stage">
+      <div class="face-frame">
+        <svg id="face-silhouette" viewBox="0 0 480 560" role="img" aria-label="Photo placeholder">
+          <rect width="480" height="560" style="fill:var(--surface)"/>
+          <circle cx="240" cy="210" r="88" style="fill:var(--border)"/>
+          <path d="M70 560c6-120 80-196 170-196s164 76 170 196z" style="fill:var(--border)"/>
+        </svg>
+        <p id="face-caption" class="face-caption label">[YOUR PHOTO GOES HERE]</p>
+      </div>
+      <div class="face-scrub" hidden><span class="face-scrub-dot"></span></div>
+      <p class="face-hint label" hidden>move your mouse to turn my head</p>
+    </div>
+  </div>
+
+  <div class="about-content">
+  <!-- 1. Hero -->
+  <section class="wrap about-hero" aria-labelledby="greeting">
+    <div class="about-intro">
+      <p class="label">About Rahul</p>
+      <h1 id="greeting" class="greeting">
+        <span class="sr-only">Glad you stopped by. I'm Rahul. What would you like to know?</span>
+        <span class="type-box" aria-hidden="true">
+          <span class="type-ghost">Glad you stopped by. I'm Rahul. What would you like to know?</span>
+          <span class="type-live"><span id="type-text"></span><span id="type-cursor" class="type-cursor"></span></span>
+        </span>
+      </h1>
+      <dl id="about-stats" class="stats" hidden></dl>
+      <nav class="pills" aria-label="Jump to a section">
+        <a class="pill glass" href="#story" data-target="story">My story</a>
+        <a class="pill glass" href="#experience" data-target="experience">Experience</a>
+        <a class="pill glass" href="#education" data-target="education">Education</a>
+        <a class="pill glass" href="#skills" data-target="skills">Skills</a>
+        <a class="pill glass cv-link" href="contact.html">Download CV</a>
+        <a id="pill-linkedin" class="pill glass" target="_blank" rel="noopener noreferrer" hidden>LinkedIn ↗</a>
+        <a id="pill-newsletter" class="pill glass" target="_blank" rel="noopener noreferrer" hidden>Newsletter ↗</a>
+        <button id="copy-email" class="pill pill-outline" type="button" hidden>
+          <span>Reach me: <span id="email-text"></span></span>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <span id="copy-status" class="copy-status label" aria-live="polite"></span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- 2. My story -->
+  <section id="story" class="wrap about-section reveal" aria-labelledby="story-h" tabindex="-1">
+    <h2 id="story-h" class="label">My story</h2>
+    <div class="about-body">
+      <p id="positioning" class="positioning placeholder">[Your one-line positioning statement]</p>
+      <div id="bio" class="prose"></div>
+      <dl id="story-facts" class="story-facts"></dl>
+    </div>
+  </section>
+
+  <!-- 3. Experience -->
+  <section id="experience" class="wrap about-section reveal" aria-labelledby="exp-h" tabindex="-1" hidden>
+    <h2 id="exp-h" class="label">Experience</h2>
+    <div class="about-body">
+      <ol id="exp-list" class="timeline"></ol>
+    </div>
+  </section>
+
+  <!-- 4. Education -->
+  <section id="education" class="wrap about-section reveal" aria-labelledby="edu-h" tabindex="-1" hidden>
+    <h2 id="edu-h" class="label">Education</h2>
+    <ol id="edu-list" class="about-body timeline"></ol>
+  </section>
+
+  <!-- 5. Skills -->
+  <section id="skills" class="wrap about-section reveal" aria-labelledby="skills-h" tabindex="-1" hidden>
+    <h2 id="skills-h" class="label">Skills and tools</h2>
+    <div id="skill-groups" class="about-body skill-groups"></div>
+  </section>
+
+  <!-- 6. Certificates -->
+  <section id="certificates" class="wrap about-section reveal" aria-labelledby="cert-h" hidden>
+    <h2 id="cert-h" class="label">Certificates</h2>
+    <ul id="cert-list" class="about-body cert-list"></ul>
+  </section>
+
+  <!-- 7. Testimonials -->
+  <section id="testimonials" class="wrap about-section reveal" aria-labelledby="test-h" hidden>
+    <h2 id="test-h" class="label">Testimonials</h2>
+    <div id="quotes" class="about-body quotes"></div>
+  </section>
+
+  <!-- 8. More about me -->
+  <section id="more-about" class="wrap about-section reveal" aria-labelledby="more-h" hidden>
+    <h2 id="more-h" class="label">More about me</h2>
+    <div class="about-body">
+      <div id="more-blocks" class="more-blocks"></div>
+      <div id="faq" class="faq"></div>
+    </div>
+  </section>
+
+  <!-- 9. CV block -->
+  <section class="wrap section reveal" aria-labelledby="cv-h">
+    <div class="teaser glass">
+      <div>
+        <h2 id="cv-h">Prefer it on one page?</h2>
+        <p>Download my CV, or send me a message.</p>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-gold cv-link" href="contact.html">Download CV</a>
+        <a class="btn btn-glass glass" href="contact.html">Get in touch</a>
+      </div>
+    </div>
+  </section>
+  </div><!-- /about-content -->
+</div><!-- /about-layout -->
+</main>
+
+<!-- Certificate lightbox -->
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-labelledby="lb-title" hidden>
+  <div class="lb-inner panel">
+    <div class="lb-head">
+      <h2 id="lb-title"></h2>
+      <button id="lb-close" class="btn btn-glass glass" type="button">Close</button>
+    </div>
+    <img id="lb-img" alt="">
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="data/sample-data.js"></script>
+<script src="js/sheet.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/about.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/face.js"></script>
+</body>
+</html>

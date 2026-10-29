@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projects · Rahul Saxena</title>
+<meta name="description" content="Research, models, dashboards and articles by Rahul Saxena.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Projects · Rahul Saxena">
+<meta property="og:description" content="Research, models, dashboards and articles by Rahul Saxena.">
+<script>/* apply the saved light/dark choice before the page draws */try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-site-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231E4FA3'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='13' font-weight='700' text-anchor='middle' fill='%23FFFFFF'%3ERS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<main id="main" class="page" tabindex="-1">
+  <section class="wrap page-head">
+    <p class="label">Projects</p>
+    <h1>Everything I've built and written</h1>
+    <p class="lede">Research reports, models, dashboards and articles. Filter by type or search for a company, topic or tool.</p>
+  </section>
+
+  <section class="wrap" aria-label="Filter and search">
+    <div class="controls">
+      <div id="chips" class="chips" role="group" aria-label="Filter by type"></div>
+      <div class="search">
+        <label class="sr-only" for="search-input">Search projects</label>
+        <input id="search-input" type="search" placeholder="Company, topic, tool" autocomplete="off">
+        <button id="search-clear" class="search-clear" type="button" aria-label="Clear search" hidden>×</button>
+      </div>
+      <div class="sort">
+        <label class="sr-only" for="sort-select">Sort</label>
+        <select id="sort-select">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="featured">Featured first</option>
+        </select>
+      </div>
+    </div>
+    <p id="result-line" class="result-line label" aria-live="polite"></p>
+  </section>
+
+  <section class="wrap" aria-label="Projects">
+    <div id="grid" class="grid-3"></div>
+    <div id="empty" hidden></div>
+    <div class="more-row"><button id="show-more" class="btn btn-glass glass" type="button" hidden>Show more</button></div>
+    <p id="disclaimer" class="disclaimer label" hidden>Research reports are academic work, not investment advice.</p>
+  </section>
+</main>
+
+<script src="js/config.js"></script>
+<script src="data/sample-data.js"></script>
+<script src="js/sheet.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/projects.js"></script>
+</body>
+</html>
