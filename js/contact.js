@@ -32,7 +32,7 @@
     $('detail-links').innerHTML = links;
     $('details-empty').hidden = !!(html || links);
 
-    if (myEmail) $('copy-email').addEventListener('click', copyEmail);
+    if (myEmail && !$('copy-email').dataset.ready) { $('copy-email').dataset.ready = '1'; $('copy-email').addEventListener('click', copyEmail); }
   }
 
   // Same pattern as the About page: copy, show "Copied"; if copying is blocked, select the text instead.
@@ -49,15 +49,16 @@
     else fallback();
   }
 
-  S.load(['About']).then(function (d) {
+  S.watch(['About'], function (d) {
     var a = S.aboutMap(d.About), name = a.Name || 'Rahul Saxena';
     document.title = 'Contact · ' + name;
     var desc = 'Get in touch with ' + name + ' about equity research and financial analyst roles.';
     [['meta[name="description"]', desc], ['meta[property="og:title"]', 'Contact · ' + name], ['meta[property="og:description"]', desc]]
       .forEach(function (m) { var el = document.querySelector(m[0]); if (el) el.setAttribute('content', m[1]); });
     renderDetails(a);
-  }).catch(function (err) {
+  }, function (err) {
     console.warn(err);
+    $('details').innerHTML = '';
     $('details-empty').hidden = false;
   });
 
@@ -96,8 +97,14 @@
 
   function setSending(on) {
     btn.disabled = on;
-    btn.textContent = on ? 'Sending…' : 'Send message';
+    btn.querySelector('.send-label').textContent = on ? 'Sending…' : 'Send message';
+    btn.classList.toggle('is-sending', on); // the paper plane keeps gliding until the form service answers
   }
+  // The paper plane glides out to the right and comes back round, once, when a filled-in form is sent.
+  function flyPlane() {
+    btn.classList.remove('fly'); void btn.offsetWidth; btn.classList.add('fly');
+  }
+  btn.addEventListener('animationend', function () { btn.classList.remove('fly'); });
 
   function showSuccess(visitorEmail) {
     form.reset();
@@ -143,6 +150,7 @@
       return;
     }
     summary.hidden = true;
+    flyPlane();
 
     var name = value('name'), email = value('email'), message = value('message');
 

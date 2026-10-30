@@ -109,16 +109,15 @@
 
   /* ---------- load ---------- */
 
-  S.load(['Research', 'Projects', 'Articles']).then(function (d) {
+  S.watch(['Research', 'Projects', 'Articles'], function (d, update) {
     items = S.workItems(d).map(function (i) {
       i.type = S.filterType(i);
       i.text = SEARCH_FIELDS.map(function (f) { return i.row[f] || ''; }).join(' ').toLowerCase();
       return i;
     });
 
+    document.querySelector('.controls').hidden = $('result-line').hidden = !items.length;
     if (!items.length) {
-      document.querySelector('.controls').hidden = true;
-      $('result-line').hidden = true;
       $('grid').innerHTML = '<p class="panel notice">New work is being added. Please check back soon.</p>';
       return;
     }
@@ -130,9 +129,10 @@
     $('disclaimer').hidden = !count('research');
     renderChips();
     writeUrl();
-    render(0);
-  }).catch(function (err) {
+    render(update ? Infinity : 0); // a quiet redraw with fresh data keeps the filter, search and "Show more"
+  }, function (err) {
     console.warn(err);
+    $('chips').innerHTML = '';
     $('grid').innerHTML = '<p class="panel notice">Content is loading slowly. Please refresh.</p>';
   });
 })();

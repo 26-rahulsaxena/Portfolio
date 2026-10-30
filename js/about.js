@@ -99,15 +99,13 @@
     if (src) {
       var img = new Image();
       img.alt = 'Portrait of ' + name;
-      img.onload = function () { $('face-silhouette').replaceWith(img); $('face-caption').remove(); };
+      img.onload = function () { $('face-silhouette').replaceWith(img); if ($('face-caption')) $('face-caption').remove(); };
       img.src = src;
     }
 
     // My story
-    if (a['Positioning Statement']) {
-      $('positioning').textContent = a['Positioning Statement'];
-      $('positioning').classList.remove('placeholder');
-    }
+    $('positioning').textContent = a['Positioning Statement'] || '';
+    $('positioning').hidden = !a['Positioning Statement'];
     $('bio').innerHTML = paragraphs(a.Bio);
     $('story-facts').innerHTML = [['Location', a.Location], ['Availability', a.Availability], ['Open to', a['Open To']]]
       .filter(function (f) { return f[1]; })
@@ -217,6 +215,7 @@
 
   /* ---------- 6. Certificates and lightbox ---------- */
 
+  var certRows = [];
   function renderCertificates(rows) {
     rows = shown(rows).sort(function (a, b) {
       var da = S.parseDate(a['Date Issued']), db = S.parseDate(b['Date Issued']);
@@ -245,9 +244,12 @@
       });
     });
 
+    certRows = rows;
+    if ($('cert-list').dataset.ready) return; // redraw with fresh data: the click handler is already there
+    $('cert-list').dataset.ready = '1';
     $('cert-list').addEventListener('click', function (e) {
       var btn = e.target.closest('button.cert-thumb');
-      if (btn) openLightbox(rows[btn.dataset.cert], btn);
+      if (btn) openLightbox(certRows[btn.dataset.cert], btn);
     });
     $('certificates').hidden = false;
   }
@@ -303,6 +305,8 @@
     track.style.setProperty('--quote-dur', Math.round(setWidth * copies / 2 / 35) + 's'); // about 35 pixels a second
 
     var btn = box.querySelector('.quote-toggle');
+    if (btn.dataset.ready) return;
+    btn.dataset.ready = '1';
     btn.addEventListener('click', function () {
       var paused = box.classList.toggle('paused');
       btn.textContent = paused ? 'Play' : 'Pause';
@@ -312,7 +316,7 @@
 
   /* ---------- load everything ---------- */
 
-  S.load(['About', 'Experience', 'Skills', 'Certificates', 'Testimonials']).then(function (d) {
+  S.watch(['About', 'Experience', 'Skills', 'Certificates', 'Testimonials'], function (d) {
     var about = S.aboutMap(d.About);
     renderAbout(about);
     renderExperience(d.Experience, about.Education);
@@ -320,9 +324,10 @@
     renderCertificates(d.Certificates);
     renderTestimonials(d.Testimonials);
     UI.reveal();
-  }).catch(function (err) {
+  }, function (err) {
     console.warn(err);
     ['experience', 'education', 'skills'].forEach(hideSection);
+    $('positioning').hidden = true; $('about-stats').hidden = true;
     $('bio').innerHTML = '<p class="panel notice">Content is loading slowly. Please refresh.</p>';
     UI.reveal();
   });

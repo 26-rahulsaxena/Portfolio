@@ -24,7 +24,7 @@
   --glass-hi: rgba(255, 255, 255, 0.10);
   --glass-ring: rgba(255, 255, 255, 0.30);
   --glass-ring-soft: var(--hover-strong);
-  --hover: var(--hover);
+  --hover: rgba(255, 255, 255, 0.06);
   --hover-strong: rgba(255, 255, 255, 0.10);
   /* glow around your cut-out photo */
   --photo-filter: drop-shadow(0 0 1px color-mix(in srgb, var(--accent) 35%, transparent)) drop-shadow(0 0 22px color-mix(in srgb, var(--accent) 12%, transparent));
@@ -150,10 +150,8 @@ html { scroll-padding-top: var(--header-h); } /* jump links land below the heade
 body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 21; background: var(--page); }
 .header-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font-weight: 800; font-size: 15px; min-height: 44px; }
-.brand-mark {
-  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
-  background: var(--accent); color: var(--on-accent); font: 700 12px/1 var(--mono); letter-spacing: 0.02em;
-}
+.brand-mark { width: 36px; height: 36px; flex: none; display: block; } /* the ₹S logo */
+@media (max-width: 340px) { .brand-name { display: none; } } /* very narrow phones: logo only (the link keeps its label) */
 .nav { display: flex; gap: 2px; padding: 4px; border-radius: 999px; }
 .nav a {
   min-height: 36px; display: inline-flex; align-items: center; padding: 0 15px;
@@ -162,18 +160,44 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 }
 .nav a:hover { color: var(--text); background: var(--hover); }
 .nav a[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
+/* the accent pill behind the current tab is one element that slides between tabs (js/ui.js) */
+.nav { position: relative; }
+.nav a { position: relative; z-index: 1; }
+.nav-pill {
+  position: absolute; top: 4px; left: 0; height: calc(100% - 8px); border-radius: 999px; background: var(--accent);
+  transition: transform .3s cubic-bezier(.3, 1.3, .5, 1), width .3s cubic-bezier(.3, 1.3, .5, 1);
+}
+.nav-pill ~ a[aria-current="page"], .nav-pill ~ a[aria-current="page"]:hover { background: none; }
+.nav.no-anim .nav-pill { transition: none; }
 .menu-btn { display: none; color: var(--text); }
 /* Smaller text on the header buttons (Download CV, Menu) */
 .site-header .btn { min-height: 40px; padding: 8px 16px; font-size: 13.5px; }
 .header-actions { display: flex; align-items: center; gap: 8px; }
-.theme-btn svg { width: 18px; height: 18px; }
 /* On touch screens the header buttons stay at least 44px tall, easy to tap */
-@media (pointer: coarse) { .site-header .btn, .theme-btn { min-height: 44px; } .theme-btn { width: 44px; height: 44px; } }
+@media (pointer: coarse) { .site-header .btn, .theme-btn { min-height: 44px; } .theme-btn { height: 44px; } }
+/* Theme switch: a pill track with a round knob that slides left (light, sun) or right (dark, moon) */
 .theme-btn {
-  width: 40px; height: 40px; display: inline-grid; place-items: center; border: 0; border-radius: var(--r-btn);
-  color: var(--text); cursor: pointer; transition: background-color .18s ease;
+  height: 40px; padding: 0 2px; display: inline-flex; align-items: center; border: 0; background: none;
+  color: var(--text-2); cursor: pointer; border-radius: 999px;
 }
-.theme-btn:hover { background: var(--hover-strong); }
+.ts-track {
+  position: relative; display: flex; align-items: center; justify-content: space-between;
+  width: 58px; height: 30px; padding: 0 7px; border-radius: 999px;
+  background: var(--hover-strong); border: 1px solid var(--border); transition: border-color .2s ease;
+}
+.theme-btn:hover .ts-track { border-color: var(--accent); }
+.ts-end svg { display: block; width: 14px; height: 14px; }
+.ts-knob {
+  position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent); display: grid; place-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); transition: transform .3s cubic-bezier(.3, 1.3, .5, 1);
+}
+.theme-btn[aria-checked="true"] .ts-knob { transform: translateX(28px); }
+.ts-knob > span { grid-area: 1 / 1; display: grid; transition: opacity .2s ease, transform .3s ease; }
+.ts-knob svg { width: 14px; height: 14px; }
+.ts-moon, .theme-btn[aria-checked="true"] .ts-sun { opacity: 0; transform: rotate(-90deg) scale(.6); }
+.theme-btn[aria-checked="true"] .ts-moon { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .ts-knob, .ts-knob > span { transition: none; } }
 .mobile-menu { margin-top: 12px; border-radius: var(--r-card); padding: 10px; background: color-mix(in srgb, var(--surface) 94%, transparent); }
 .mobile-menu a {
   display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: var(--r-btn);
@@ -346,7 +370,7 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 
 /* Page header */
 .page-head { padding-top: 40px; padding-bottom: 28px; display: grid; gap: 12px; }
-.page-head h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; letter-spacing: -0.02em; max-width: 18ch; }
+.page-head h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; letter-spacing: -0.02em; } /* one line where it fits */
 .lede { color: var(--text-2); font-size: 17px; max-width: 60ch; }
 
 /* Controls: chips, search, sort */
@@ -757,7 +781,7 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 
 /* Home: full disclaimer just above the footer */
 .disclaimer-box { padding: clamp(20px, 3vw, 28px); display: grid; gap: 10px; }
-.disclaimer-box p { color: var(--text-2); font-size: 15px; max-width: 85ch; }
+.disclaimer-box p { color: var(--text-2); font-size: 15px; } /* runs the full width of the page */
 .disclaimer-box strong { color: var(--text); }
 
 /* ==========================================================
@@ -837,7 +861,7 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
   .sc-stage { aspect-ratio: 4 / 3; border-radius: var(--r-card); }
   .sc-arrow { width: 44px; height: 44px; }
   .sc-prev { left: 8px; } .sc-next { right: 8px; }
-  .sc-slide figcaption { padding: 36px 16px 14px; }
+
 }
 
 /* ==========================================================
@@ -901,17 +925,19 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 .g-thumb { border: 0; border-radius: 4px; background: var(--hover); }
 .detail-image img { border: 0; border-radius: 4px; }
 
-/* Gallery slideshow: no frame; it runs the full width of the page and fades into it at the sides */
+/* Gallery slideshow: no frame and no shading; the photo sits on the page with only a faint wash of its own colours */
 .showcase.wrap { max-width: none; padding-left: 0; padding-right: 0; }
-.sc-stage {
-  border: 0; border-radius: 0; background: none;
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
-          mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+.sc-stage { border: 0; border-radius: 0; background: none; }
+.sc-bg { filter: blur(48px) saturate(1.2); opacity: .16; } /* the very light ambience behind the photo */
+.sc-slide figcaption {
+  left: max(7%, 16px); right: auto; bottom: 14px; padding: 8px 14px; border-radius: 18px; max-width: calc(100% - 32px);
+  background: var(--scrim); display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px;
 }
+.sc-slide figcaption strong { font-size: 15px; }
 .sc-prev { left: max(7%, 16px); }
 .sc-next { right: max(7%, 16px); }
 .sc-bar { right: max(7%, 14px); }
-.sc-slide figcaption { padding-left: max(7%, 16px); padding-right: max(7%, 16px); }
+
 @media (max-width: 640px) {
   .sc-stage { border-radius: 0; }
   .contact-details { padding-right: 0; border-right: 0; padding-bottom: 24px; border-bottom: 1px solid var(--divider); }
@@ -930,3 +956,86 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 .about-intro .stats { margin: 4px 0 18px; }
 @media (max-width: 640px) { .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 16px; } .stats dt { font-size: 18px; } }
 .load-note { color: var(--muted); padding-top: 8px; padding-bottom: 8px; text-transform: none; }
+
+/* ==========================================================
+   LOADING: skeleton placeholders and the "counting up" loader
+   ========================================================== */
+/* Skeletons: calm grey shapes where content will appear, same size as the real thing (nothing jumps) */
+.skel { display: block; height: 12px; border-radius: 4px; background: var(--hover-strong); animation: skel-pulse 1.6s ease-in-out infinite; }
+.skel.t { height: 20px; }   /* a title line */
+.skel.w30 { width: 30%; } .skel.w45 { width: 45%; } .skel.w60 { width: 60%; } .skel.w80 { width: 80%; } .skel.w95 { width: 95%; }
+.skel-card { pointer-events: none; gap: 12px; }
+.featured-list .skel-card { min-height: 173px; } /* the height of a real featured card */
+@media (max-width: 900px) { .featured-list .skel-card { min-height: 162px; } }
+@media (max-width: 640px) { .featured-list .skel-card { min-height: 151px; } }
+.grid-3 .skel-card { min-height: 230px; }
+/* stats placeholder: the same text shapes as real numbers, but invisible, so it takes exactly their space */
+.skel-stat dt, .skel-stat dd { color: transparent; width: fit-content; border-radius: 4px; background: var(--hover-strong); animation: skel-pulse 1.6s ease-in-out infinite; }
+.skel-line { margin: 0 0 10px; }
+.skel-detail { display: grid; gap: 14px; padding-top: 24px; min-height: 100vh; align-content: start; } /* keeps the footer out of view until the project arrives */
+#chips:empty { min-height: 44px; } /* room for the filter buttons before they arrive */
+@media (max-width: 640px) { #chips:empty { min-height: 96px; } } /* two rows on phones */
+/* Contact details: keep about the same space while they load */
+#details:has(.skel) { min-height: 252px; }
+#details:has(.skel) + #detail-links { min-height: 44px; }
+/* The header is added by script a moment after the page first draws: keep its space so nothing moves down */
+body:not(:has(.site-header)) { padding-top: var(--header-h); }
+.g-skel-grid { margin-top: 20px; }
+.skel.g-skel { height: auto; aspect-ratio: 4 / 3; border-radius: 4px; }
+@keyframes skel-pulse { 50% { opacity: .45; } }
+
+/* The loader: a large percentage in the middle of the content area, below the header. Nothing around it. */
+.loader {
+  position: fixed; inset: var(--header-h) 0 0 0; z-index: 15; display: grid; place-items: center;
+  pointer-events: none; transition: opacity .25s ease;
+}
+.loader.out { opacity: 0; }
+.loader-num {
+  font: 600 54px/1 var(--mono); font-variant-numeric: tabular-nums; color: var(--text); letter-spacing: -0.02em;
+  position: relative;
+}
+/* a soft fade in the page colour behind the number, with no edge, so text underneath doesn't show through */
+.loader-num::before {
+  content: ''; position: absolute; z-index: -1; left: 50%; top: 50%; width: 320px; height: 220px; transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, var(--page) 55%, color-mix(in srgb, var(--page) 70%, transparent) 75%, transparent);
+}
+.loader-num .pct { color: var(--accent); }
+.loader-num.still { font-size: 28px; }
+@media (max-width: 640px) { .loader-num { font-size: 40px; } .loader-num.still { font-size: 22px; } }
+@media (prefers-reduced-motion: reduce) { .skel, .skel-stat dt, .skel-stat dd { animation: none; } .loader { transition: none; } }
+
+/* Gallery larger view: buttons show only a sign (✕ ← →); screen readers still hear Close / Previous / Next */
+.btn-sign { min-width: 64px; min-height: 44px; padding: 0 20px; border-radius: 999px; justify-content: center; font-size: 18px; line-height: 1; } /* filled pill, like the Open buttons and the current tab */
+
+/* Download CV: arrow drops into the tray, then a tick */
+.dl-icon { display: inline-grid; width: 18px; height: 18px; flex: none; }
+.dl-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.mobile-menu .cv-btn .dl-icon { margin-right: 8px; }
+.pill.cv-link { display: inline-flex; align-items: center; gap: 8px; }
+.dl-tick { opacity: 0; }
+.dl-go .dl-arrow { animation: dl-drop .45s ease-in 2; }
+.dl-done .dl-arrow { opacity: 0; }
+.dl-done .dl-tick { opacity: 1; animation: dl-tick .35s ease-out; }
+@keyframes dl-drop { 0% { transform: translateY(-6px); opacity: 0; } 30% { opacity: 1; } 80% { transform: translateY(3px); opacity: 1; } 100% { transform: translateY(5px); opacity: 0; } }
+@keyframes dl-tick { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Send message: a paper plane glides out to the right and comes back round */
+.send-btn { position: relative; overflow: hidden; }
+.plane { display: inline-grid; width: 18px; height: 18px; }
+.plane svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.send-btn.fly .plane { animation: plane-fly 1.3s ease-in-out; }
+.send-btn.is-sending .plane { animation: plane-fly 1.3s ease-in-out infinite; }
+.send-btn.fly .send-label, .send-btn.is-sending .send-label { animation: label-dip 1.3s ease-in-out; }
+@keyframes plane-fly {
+  0% { transform: none; }
+  50% { transform: translate(80px, -14px) rotate(8deg); opacity: 1; }
+  51% { transform: translate(80px, -14px); opacity: 0; }
+  52% { transform: translate(-220px, 12px); opacity: 0; }
+  65% { opacity: 1; }
+  100% { transform: none; }
+}
+@keyframes label-dip { 50%, 80% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill { transition: none; }
+  .dl-go .dl-arrow, .dl-done .dl-tick, .send-btn .plane, .send-btn .send-label { animation: none !important; }
+}

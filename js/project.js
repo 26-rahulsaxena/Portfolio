@@ -125,14 +125,14 @@
       '<p>It may have been renamed or hidden.</p><a class="btn btn-gold" href="projects.html">Browse all projects</a></div>';
   }
 
-  S.load(['Research', 'Projects', 'Articles']).then(function (d) {
+  S.watch(['Research', 'Projects', 'Articles'], function (d) {
     var items = S.workItems(d);
     var item = items.filter(function (i) { return i.id === id && i.tab.toLowerCase() === type; })[0];
     if (!item) return notFound();
     render(item);
     renderMore(items, item);
     UI.reveal();
-  }).catch(function (err) {
+  }, function (err) {
     console.warn(err);
     $('detail').innerHTML = '<p class="panel notice">Content is loading slowly. Please refresh.</p>';
   });

@@ -65,6 +65,23 @@ Add one row per photo or clip to the **Gallery** tab of your sheet:
 
 Every photo (not clips) also appears in the big slideshow at the top of the page. Photos, and video files you put in `assets/` (`.mp4`), open in a larger view on the page. YouTube and Google Drive clips open in a new tab. Clips never play by themselves. Keep video files small (under about 10 MB each); for longer clips, upload to YouTube (it can be "Unlisted") and paste the link.
 
+## Logo
+
+The logo is ₹S on a rounded square in the accent colour. The letters are outlines of Manrope ExtraBold, so no font is needed to show it.
+
+- **Header:** drawn in code in `js/ui.js` (`LOGO`), using the theme colours, so it switches with the light/dark button.
+- **Files in `assets/`:** `favicon.svg` (browser tab; follows the visitor's light/dark setting), `favicon.ico` (16 and 32 px, older browsers), `apple-touch-icon.png` (iPhone home screen), `icon-192.png` and `icon-512.png` (Android and the web manifest; also good as a LinkedIn or Substack profile picture), `og-image.png` (the picture shown when your link is shared), `site.webmanifest`.
+- **Every page's `<head>`** links these files.
+- **⚠ Do this once you know your site address:** link previews (LinkedIn, WhatsApp, X) need the full address of the share picture. In each page's `<head>`, change `content="assets/og-image.png"` to `content="https://<your-address>/assets/og-image.png"`, for example `https://<username>.github.io/portfolio/assets/og-image.png`.
+
+## How loading works
+
+- **Repeat visits are instant.** Each visitor's browser keeps the last copy of your sheet (per tab, in `localStorage`). Pages draw from that copy straight away, then quietly fetch the sheet in the background and redraw only if something changed, keeping the visitor's scroll position, filters and any open photo.
+- **First visits** show your name, headline, "Open to", buttons and photo at once (they are written into the pages), with soft grey placeholders where cards, numbers and photos will appear, so nothing jumps when they arrive.
+- **The loader** (a large counting percentage) appears only if the sheet takes longer than about 0.4 s. It climbs while the sheet loads, finishes at 100% once the page has drawn, and fades. Visitors who turn off motion see a still "Loading…".
+- **If Google doesn't answer within 12 seconds**, the loader goes away and the page shows "Content is loading slowly. Please refresh." A visitor who has been before keeps seeing their saved copy instead.
+- If you rename or remove sheet columns, change `SAVE_VERSION` at the top of the loading section in `js/sheet.js` (for example `'v1'` to `'v2'`) so old saved copies are ignored.
+
 ## About tab fields
 
 | Field | Where it shows |

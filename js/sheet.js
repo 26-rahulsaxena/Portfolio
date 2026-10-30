@@ -2,7 +2,6 @@
    Everything is exposed on window.Sheet. */
 (function () {
   var CONFIG = window.CONFIG || { SHEET_URLS: {} };
-  var CACHE_MS = 5 * 60 * 1000;
   var pending = {};
 
   // CSV parser: handles quoted commas, doubled quotes and line breaks inside quoted cells.
@@ -39,52 +38,111 @@
       });
   }
 
+  /* ---------- loading, with a saved copy for instant repeat visits ----------
+     Each tab's last good data is kept in this browser (localStorage). A page shows the saved copy at once,
+     then fetches the sheet in the background and redraws only if something changed. */
+  var SAVE_VERSION = 'v1';      // bump when sheet columns change, so old saved copies are ignored
+  var SAVE_MAX = 400000;        // characters per tab; a bigger tab is simply not saved
+  var FRESH_MS = 60 * 1000;     // a copy saved less than a minute ago is not re-fetched (quick page hops)
+  var TIMEOUT_MS = 12000;       // give up on Google after 12 seconds
+
+  function readSaved(name) {
+    try {
+      var s = JSON.parse(localStorage.getItem('sheet:' + SAVE_VERSION + ':' + name));
+      return s && Array.isArray(s.rows) ? s : null;
+    } catch (e) { return null; } // private windows and blocked storage
+  }
+  function save(name, rows) {
+    if (!rows.length) return; // never replace good data with an empty result
+    try {
+      var txt = JSON.stringify({ t: Date.now(), rows: rows });
+      if (txt.length <= SAVE_MAX) localStorage.setItem('sheet:' + SAVE_VERSION + ':' + name, txt);
+    } catch (e) { /* storage full or blocked: still works, just not instant next time */ }
+  }
+
+  // One network request per tab per page, shared by everyone who asks for it.
   function fetchTab(name) {
     var url = (CONFIG.SHEET_URLS || {})[name];
     if (!url) return Promise.reject(new Error('No sheet link for ' + name + ' in js/config.js'));
-    var key = 'sheet:' + name;
-    try {
-      var hit = JSON.parse(sessionStorage.getItem(key));
-      if (hit && Date.now() - hit.t < CACHE_MS) return Promise.resolve(hit.rows);
-    } catch (e) { /* storage unavailable: just fetch */ }
-    return fetch(url).then(function (res) {
-      if (!res.ok) throw new Error('Sheet ' + name + ' returned ' + res.status);
-      return res.text();
-    }).then(function (text) {
-      var rows = toObjects(parseCSV(text));
-      try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), rows: rows })); } catch (e) {}
-      return rows;
-    });
-  }
-
-  function getTab(name) {
-    if (CONFIG.USE_LOCAL_SAMPLE) {
-      var rows = ((window.SAMPLE_DATA || {})[name] || []).map(function (r) {
-        var o = {};
-        Object.keys(r).forEach(function (k) { o[k] = r[k] == null ? '' : String(r[k]).trim(); });
-        return o;
-      });
-      return Promise.resolve(rows);
-    }
     if (!pending[name]) {
-      pending[name] = fetchTab(name).catch(function (e) { delete pending[name]; throw e; });
+      var ctl = window.AbortController ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctl) ctl.abort(); }, TIMEOUT_MS);
+      pending[name] = fetch(url, ctl ? { signal: ctl.signal } : undefined).then(function (res) {
+        if (!res.ok) throw new Error('Sheet ' + name + ' returned ' + res.status);
+        return res.text();
+      }).then(function (text) {
+        clearTimeout(timer);
+        var rows = toObjects(parseCSV(text));
+        save(name, rows);
+        return rows;
+      }, function (e) { clearTimeout(timer); delete pending[name]; throw e; });
     }
     return pending[name];
   }
 
-  // load(['Research','About']) -> Promise of { Research: [...], About: [...] }
-  // A tab that fails to load comes back empty (its sections then hide) and its name is listed in `failed`.
-  // Only if every tab fails does the whole load fail, so the page can show its "loading slowly" message.
-  function load(names) {
+  function sampleRows(name) {
+    return ((window.SAMPLE_DATA || {})[name] || []).map(function (r) {
+      var o = {};
+      Object.keys(r).forEach(function (k) { o[k] = r[k] == null ? '' : String(r[k]).trim(); });
+      return o;
+    });
+  }
+
+  function emit(type, detail) {
+    if (typeof document !== 'undefined') document.dispatchEvent(new CustomEvent(type, { detail: detail }));
+  }
+
+  // watch(['Projects','About'], draw, fail): calls draw({ Projects: [...], About: [...], failed: [...] }, isUpdate)
+  //   - at once with the saved copy (if this browser has one for every tab),
+  //   - again only if the fresh sheet differs (isUpdate = true), so pages can keep scroll, filters and open views.
+  // A tab that fails comes back with its saved copy, or empty (its section then hides) and is listed in `failed`.
+  // fail() runs only if nothing at all could be shown. background = true for the header/footer (no loader).
+  function watch(names, draw, fail, background) {
+    var shown = null;
+    var waiting = false;
+    function done(ok) { if (waiting) { waiting = false; emit('sheetready', { ok: ok }); } }
+    function show(d, failed) {
+      var key = JSON.stringify(names.map(function (n) { return d[n]; }));
+      if (key === shown) return;
+      var update = shown !== null;
+      shown = key;
+      d.failed = failed;
+      if (failed.length) emit('sheetfailed', failed);
+      draw(d, update);
+      done(true);
+    }
+    if (!background) { waiting = true; emit('sheetwait'); }
+
+    if (CONFIG.USE_LOCAL_SAMPLE) {
+      var s = {}; names.forEach(function (n) { s[n] = sampleRows(n); });
+      return show(s, []);
+    }
+
+    var saved = {}, all = true, recent = true;
+    names.forEach(function (n) {
+      var c = readSaved(n);
+      if (c) saved[n] = c.rows; else all = false;
+      if (!c || Date.now() - c.t > FRESH_MS) recent = false;
+    });
+    if (all) show(saved, []);
+    if (all && recent) return;
+
     var failed = [];
-    return Promise.all(names.map(function (n) {
-      return getTab(n).catch(function (e) { console.warn('Could not load the ' + n + ' tab:', e.message || e); failed.push(n); return []; });
+    Promise.all(names.map(function (n) {
+      return fetchTab(n).catch(function (e) {
+        console.warn('Could not load the ' + n + ' tab:', e.message || e);
+        failed.push(n);
+        return saved[n] || []; // a failed refresh keeps the saved copy
+      });
     })).then(function (lists) {
-      if (names.length && failed.length === names.length) throw new Error('No sheet tabs could be loaded');
-      if (failed.length && typeof document !== 'undefined') document.dispatchEvent(new CustomEvent('sheetfailed', { detail: failed }));
-      var out = { failed: failed };
-      names.forEach(function (n, i) { out[n] = lists[i]; });
-      return out;
+      if (names.length && failed.length === names.length && !names.some(function (n) { return saved[n]; })) {
+        done(false);
+        if (fail) fail(new Error('No sheet tabs could be loaded'));
+        return;
+      }
+      var d = {};
+      names.forEach(function (n, i) { d[n] = lists[i]; });
+      show(d, failed.filter(function (n) { return !saved[n]; }));
     });
   }
 
@@ -235,7 +293,7 @@
 
   window.Sheet = {
     filterType: filterType,
-    load: load, parseCSV: parseCSV, toObjects: toObjects, aboutMap: aboutMap,
+    watch: watch, parseCSV: parseCSV, toObjects: toObjects, aboutMap: aboutMap,
     isYes: isYes, esc: esc, safeUrl: safeUrl, imageUrl: imageUrl, makeId: makeId,
     parseDate: parseDate, fmtDate: fmtDate, num: num, upside: upside, fmtPct: fmtPct, fmtINR: fmtINR,
     call: call, workItems: workItems, byNewest: byNewest, byFeatured: byFeatured

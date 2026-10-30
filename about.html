@@ -9,9 +9,18 @@
 <meta property="og:title" content="About · Rahul Saxena">
 <meta property="og:description" content="Background, experience, education and skills of Rahul Saxena.">
 <script>/* apply the saved light/dark choice before the page draws */try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-site-theme",t)}catch(e){}</script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231E4FA3'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='13' font-weight='700' text-anchor='middle' fill='%23FFFFFF'%3ERS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="assets/site.webmanifest">
+<meta name="theme-color" content="#0B111C">
+<!-- Link previews: replace with the full address once you know it, e.g. https://<you>.github.io/portfolio/assets/og-image.png -->
+<meta property="og:image" content="assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://docs.google.com" crossorigin> <!-- your sheet: connect early -->
+<link rel="preload" as="image" href="assets/me.webp" type="image/webp" fetchpriority="high">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -28,7 +37,6 @@
           <circle cx="240" cy="210" r="88" style="fill:var(--border)"/>
           <path d="M70 560c6-120 80-196 170-196s164 76 170 196z" style="fill:var(--border)"/>
         </svg>
-        <p id="face-caption" class="face-caption label">[YOUR PHOTO GOES HERE]</p>
       </div>
       <div class="face-scrub" hidden><span class="face-scrub-dot"></span></div>
       <p class="face-hint label" hidden>move your mouse to turn my head</p>
@@ -47,7 +55,7 @@
           <span class="type-live"><span id="type-text"></span><span id="type-cursor" class="type-cursor"></span></span>
         </span>
       </h1>
-      <dl id="about-stats" class="stats" hidden></dl>
+      <dl id="about-stats" class="stats"><div class="stat skel-stat" aria-hidden="true"><dt>00,000+</dt><dd>Combined following</dd></div><div class="stat skel-stat" aria-hidden="true"><dt>0M+</dt><dd>Impressions at peak</dd></div><div class="stat skel-stat" aria-hidden="true"><dt>000+</dt><dd>Posts published</dd></div></dl>
       <nav class="pills" aria-label="Jump to a section">
         <a class="pill glass" href="#story" data-target="story">My story</a>
         <a class="pill glass" href="#experience" data-target="experience">Experience</a>
@@ -69,8 +77,8 @@
   <section id="story" class="wrap about-section reveal" aria-labelledby="story-h" tabindex="-1">
     <h2 id="story-h" class="label">My story</h2>
     <div class="about-body">
-      <p id="positioning" class="positioning placeholder">[Your one-line positioning statement]</p>
-      <div id="bio" class="prose"></div>
+      <p id="positioning" class="positioning"><span class="skel t w80" aria-hidden="true"></span></p>
+      <div id="bio" class="prose"><span class="skel skel-line w95" aria-hidden="true"></span><span class="skel skel-line w95" aria-hidden="true"></span><span class="skel skel-line w60" aria-hidden="true"></span></div>
       <dl id="story-facts" class="story-facts"></dl>
     </div>
   </section>

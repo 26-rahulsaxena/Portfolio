@@ -32,7 +32,7 @@ window.CONFIG = {
 
   // Contact form endpoint from Formspree, e.g. 'https://formspree.io/f/xxxxxxx' (see DEPLOY.md step 6).
   // Leave empty until then: the form will say it is not switched on yet.
-  CONTACT_FORM_URL: 'https://formspree.io/f/meaazybb',
+  CONTACT_FORM_URL: '',
 
   // Your portrait on the About page, moving with the visitor's mouse.
   //   mode: 'photo'   = your cut-out photo (transparent background) tilts in 3D toward the cursor.

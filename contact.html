@@ -9,9 +9,17 @@
 <meta property="og:title" content="Contact · Rahul Saxena">
 <meta property="og:description" content="Get in touch with Rahul Saxena about equity research and analyst roles.">
 <script>/* apply the saved light/dark choice before the page draws */try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-site-theme",t)}catch(e){}</script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231E4FA3'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='13' font-weight='700' text-anchor='middle' fill='%23FFFFFF'%3ERS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="assets/site.webmanifest">
+<meta name="theme-color" content="#0B111C">
+<!-- Link previews: replace with the full address once you know it, e.g. https://<you>.github.io/portfolio/assets/og-image.png -->
+<meta property="og:image" content="assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://docs.google.com" crossorigin> <!-- your sheet: connect early -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -27,9 +35,9 @@
     <!-- Left: contact details (filled from the About tab) -->
     <aside class="panel contact-details" aria-labelledby="details-h">
       <h2 id="details-h" class="sr-only">Contact details</h2>
-      <dl id="details" class="details-list"></dl>
+      <dl id="details" class="details-list"><span class="skel skel-line w60" aria-hidden="true"></span><span class="skel skel-line w80" aria-hidden="true"></span><span class="skel skel-line w45" aria-hidden="true"></span></dl>
       <div id="detail-links" class="detail-links"></div>
-      <p id="details-empty" class="placeholder" hidden>[Contact details will appear here]</p>
+      <p id="details-empty" class="notice" hidden>Please use the form to get in touch.</p>
     </aside>
 
     <!-- Right: the message form -->
@@ -63,7 +71,7 @@
           <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
         </div>
 
-        <button id="send-btn" class="btn btn-gold" type="submit">Send message</button>
+        <button id="send-btn" class="btn btn-gold send-btn" type="submit"><span class="send-label">Send message</span><span class="plane" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21.5 2.5 10.6 13.4"/><path d="M21.5 2.5 14.6 21.5l-4-8.1-8.1-4z"/></svg></span></button>
         <div id="form-notice" class="form-notice" aria-live="polite"></div>
         <p class="privacy-note">Your details are only used to reply to you.</p>
       </form>

@@ -163,7 +163,7 @@
 
   function buildShowcase() {
     slides = items.filter(function (it) { return it.kind === 'photo'; });
-    if (!slides.length) return;
+    if (!slides.length) { $('showcase').hidden = true; return; } // clips only: no slideshow
     $('sc-slides').innerHTML = slides.map(function (it, n) {
       var where = [it.event, it.date].filter(Boolean).join(' · ');
       // Each slide: a blurred copy fills the frame behind, the whole photo sits on top (nothing cropped).
@@ -250,17 +250,21 @@
   });
   /* ---------- load ---------- */
 
-  S.load(['Gallery']).then(function (d) {
+  S.watch(['Gallery'], function (d, update) {
+    if (update && !$('g-lightbox').hidden) return; // a photo is open: keep it; fresh photos show on the next visit
+    stopAuto(); scAt = 0;
     items = (d.Gallery || []).filter(function (r) { return S.isYes(r.Show); }).map(toItem).filter(Boolean);
     if (!items.length) {
+      $('showcase').hidden = true;
       $('gallery').innerHTML = '<p class="panel notice">Photos and clips from events will appear here soon.</p>';
       return;
     }
     buildShowcase();
     renderChips();
     render();
-  }).catch(function (err) {
+  }, function (err) {
     console.warn(err);
+    $('showcase').hidden = true;
     $('gallery').innerHTML = '<p class="panel notice">Content is loading slowly. Please refresh.</p>';
   });
 })();

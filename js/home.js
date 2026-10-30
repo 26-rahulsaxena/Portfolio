@@ -5,39 +5,49 @@
 
   var card = UI.card; // shared card markup lives in ui.js
 
-  function renderIdentity(a) {
-    var name = a.Name || 'Rahul Saxena';
-    $('name-sr').textContent = $('name-ghost').textContent = name; // the hidden full copy keeps the space reserved
-    UI.typewrite($('name-text'), $('name-cursor'), name, 400);
-    $('tagline').textContent = a.Headline || 'Finance student · Aspiring equity research analyst';
-    $('open-to').textContent = a['Open To'] || 'Equity Research · Financial Analyst roles';
-    var stats = UI.stats(a); // Stat 1-3 from the About tab; the row stays hidden when all are blank
-    $('hero-stats').innerHTML = stats; $('hero-stats').hidden = !stats;
-    // First choice: the cut-out photo set in config.js (HEAD_TURN.photo), shown without a box.
-    // If it is missing, use the Photo Link from the sheet in the usual frame.
-    var cut = S.safeUrl(((window.CONFIG || {}).HEAD_TURN || {}).photo);
-    if (cut) {
-      var tries = /\.webp$/i.test(cut) ? [cut, cut.replace(/\.webp$/i, '.png')] : [cut];
-      var photo = new Image();
-      photo.alt = 'Portrait of ' + (a.Name || 'Rahul Saxena');
-      photo.className = 'portrait-cutout';
-      photo.onload = function () {
-        $('portrait-silhouette').replaceWith(photo);
-        document.querySelector('.portrait').classList.add('is-cutout');
-      };
-      photo.onerror = function () { tries.shift(); if (tries.length) photo.src = tries[0]; else sheetPhoto(); };
-      photo.src = tries[0];
-    } else sheetPhoto();
+  // Shown straight away, before any data: the name in the page types itself out, and the photo from config.js loads.
+  UI.typewrite($('name-text'), $('name-cursor'), $('name-ghost').textContent, 400);
+  showPhoto();
 
-    function sheetPhoto() {
-      var src = S.imageUrl(a['Photo Link']);
-      if (!src || !$('portrait-silhouette')) return;
-      var img = new Image();
-      img.alt = 'Portrait of ' + (a.Name || 'Rahul Saxena');
-      img.width = 240; img.height = 300;
-      img.onload = function () { $('portrait-silhouette').replaceWith(img); };
-      img.src = src; // if it fails to load, the silhouette simply stays
+  // Sheet values replace the wording already in the page, only where they differ (so nothing flashes).
+  function setText(el, value) { if (value && el.textContent !== value) el.textContent = value; }
+  function renderIdentity(a) {
+    if (a.Name && a.Name !== $('name-ghost').textContent) {
+      $('name-sr').textContent = $('name-ghost').textContent = $('name-text').textContent = a.Name;
     }
+    setText($('tagline'), a.Headline);
+    setText($('open-to'), a['Open To']);
+    var stats = UI.stats(a); // Stat 1-3 from the About tab; the row hides when all are blank
+    $('hero-stats').innerHTML = stats; $('hero-stats').hidden = !stats;
+    if (cutFailed) sheetPhoto(a);
+  }
+
+  // The cut-out photo set in config.js (HEAD_TURN.photo), shown without a box.
+  // If it is missing or fails, an old Photo Link from the sheet is used in the usual frame.
+  var cutFailed = false;
+  function showPhoto() {
+    var cut = S.safeUrl(((window.CONFIG || {}).HEAD_TURN || {}).photo);
+    if (!cut) { cutFailed = true; return; }
+    var tries = /\.webp$/i.test(cut) ? [cut, cut.replace(/\.webp$/i, '.png')] : [cut];
+    var photo = new Image();
+    photo.alt = 'Portrait of Rahul Saxena';
+    photo.className = 'portrait-cutout';
+    photo.fetchPriority = 'high';
+    photo.onload = function () {
+      $('portrait-silhouette').replaceWith(photo);
+      document.querySelector('.portrait').classList.add('is-cutout');
+    };
+    photo.onerror = function () { tries.shift(); if (tries.length) photo.src = tries[0]; else cutFailed = true; };
+    photo.src = tries[0];
+  }
+  function sheetPhoto(a) {
+    var src = S.imageUrl(a['Photo Link']);
+    if (!src || !$('portrait-silhouette')) return;
+    var img = new Image();
+    img.alt = 'Portrait of ' + (a.Name || 'Rahul Saxena');
+    img.width = 240; img.height = 300;
+    img.onload = function () { $('portrait-silhouette').replaceWith(img); };
+    img.src = src; // if it fails to load, the silhouette simply stays
   }
 
   function tickerItems(calls, hidden) {
@@ -60,6 +70,8 @@
     track.innerHTML = tickerItems(calls) + tickerItems(calls, true);
     track.style.setProperty('--dur', calls.length * 6 + 's');
     var btn = box.querySelector('.ticker-toggle');
+    if (btn.dataset.ready) { box.hidden = false; return; } // redraw with fresh data: the button already works
+    btn.dataset.ready = '1';
     btn.addEventListener('click', function () {
       var paused = box.querySelector('.ticker').classList.toggle('paused');
       btn.textContent = paused ? 'Play' : 'Pause';
@@ -84,7 +96,7 @@
     }).join('');
   }
 
-  S.load(['Research', 'Projects', 'Articles', 'About']).then(function (d) {
+  S.watch(['Research', 'Projects', 'Articles', 'About'], function (d) {
     renderIdentity(S.aboutMap(d.About));
 
     var items = S.workItems(d);
@@ -99,15 +111,13 @@
     renderTicker(items);
 
     var latest = others.filter(function (i) { return top.indexOf(i) < 0; }).slice(0, 3);
-    if (latest.length) {
-      $('latest-list').innerHTML = latest.map(function (i) { return card(i, ' reveal'); }).join('');
-      $('latest').hidden = false;
-    }
+    $('latest-list').innerHTML = latest.map(function (i) { return card(i, ' reveal'); }).join('');
+    $('latest').hidden = !latest.length;
     renderByType(items);
     UI.reveal();
-  }).catch(function (err) {
+  }, function (err) {
     console.warn(err);
-    renderIdentity({}); // name, default wording and your photo (from config.js) still appear
+    $('hero-stats').hidden = true;
     $('featured-list').innerHTML = '<p class="panel notice">Content is loading slowly. Please refresh.</p>';
     UI.reveal();
   });

@@ -22,6 +22,7 @@
     var img = new Image();
     img.alt = 'Portrait of Rahul Saxena';
     img.className = 'face-photo';
+    img.fetchPriority = 'high'; // the main picture of the page: load it first
     img.onload = function () { done(img); };
     img.onerror = function () { tries.shift(); if (tries.length) img.src = tries[0]; else failed('the photo could not be loaded'); };
     img.src = tries[0];
