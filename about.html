@@ -24,61 +24,63 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="page-about">
+<canvas id="bg-canvas" aria-hidden="true"></canvas> <!-- the chart-and-trendline background, same as Home -->
 <main id="main" class="page" tabindex="-1">
-<!-- Two columns on desktop: the photo stays in place on the left while the content on the right scrolls. -->
-<div class="wrap about-layout">
-  <div class="about-photo">
-    <!-- js/face.js puts your photo (or the avatar, or your head-turn media) inside #face-stage -->
-    <div id="face-stage" class="face-stage">
-      <div class="face-frame">
-        <svg id="face-silhouette" viewBox="0 0 480 560" role="img" aria-label="Photo placeholder">
-          <rect width="480" height="560" style="fill:var(--surface)"/>
-          <circle cx="240" cy="210" r="88" style="fill:var(--border)"/>
-          <path d="M70 560c6-120 80-196 170-196s164 76 170 196z" style="fill:var(--border)"/>
-        </svg>
-      </div>
-      <div class="face-scrub" hidden><span class="face-scrub-dot"></span></div>
-      <p class="face-hint label" hidden>move your mouse to turn my head</p>
-    </div>
-  </div>
+<h1 class="sr-only">About Rahul Saxena</h1>
 
-  <div class="about-content">
-  <!-- 1. Hero -->
-  <section class="wrap about-hero" aria-labelledby="greeting">
-    <div class="about-intro">
+<!-- The opening scene: big name behind the photo; on scroll the names fade, the photo docks to the left
+     (desktop) and the headline and shortcut pills appear. Driven by js/about.js. -->
+<section id="ab-scene" class="ab-scene" aria-label="Introduction">
+  <div class="ab-stage">
+    <p id="ab-first" class="ab-name ab-l" aria-hidden="true">Rahul</p>
+    <p id="ab-last" class="ab-name ab-r" aria-hidden="true">Saxena</p>
+    <div id="ab-glow" class="ab-glow" aria-hidden="true"></div>
+    <div id="ab-photo" class="ab-photo">
+      <svg id="face-silhouette" viewBox="0 0 480 560" role="img" aria-label="Photo placeholder">
+        <circle cx="240" cy="210" r="88" style="fill:var(--border)"/>
+        <path d="M70 560c6-120 80-196 170-196s164 76 170 196z" style="fill:var(--border)"/>
+      </svg>
+    </div>
+    <div id="ab-head" class="ab-head">
       <p class="label">About Rahul</p>
-      <h1 id="greeting" class="greeting">
-        <span class="sr-only">Glad you stopped by. I'm Rahul. What would you like to know?</span>
+      <!-- The headline types itself out once you scroll to it; the hidden copy keeps its space so nothing moves -->
+      <h2 id="greeting" class="ab-greet">
+        <span class="sr-only"><span id="hl1-sr">Student of the market.</span> <span id="hl2-sr">Always in session.</span></span>
         <span class="type-box" aria-hidden="true">
-          <span class="type-ghost">Glad you stopped by. I'm Rahul. What would you like to know?</span>
-          <span class="type-live"><span id="type-text"></span><span id="type-cursor" class="type-cursor"></span></span>
+          <span class="type-ghost"><span id="hl1-ghost" class="ab-l1">Student of the market.</span><span id="hl2-ghost" class="ab-l2">Always in session.</span></span>
+          <span class="type-live"><span class="ab-l1"><span id="hl1"></span><span id="type-cursor" class="type-cursor"></span></span><span class="ab-l2"><span id="hl2"></span></span></span>
         </span>
-      </h1>
-      <dl id="about-stats" class="stats"><div class="stat skel-stat" aria-hidden="true"><dt>00,000+</dt><dd>Combined following</dd></div><div class="stat skel-stat" aria-hidden="true"><dt>0M+</dt><dd>Impressions at peak</dd></div><div class="stat skel-stat" aria-hidden="true"><dt>000+</dt><dd>Posts published</dd></div></dl>
+      </h2>
+      <p id="hero-sub" class="ab-sub">Finance student · Equity research · New Delhi</p>
       <nav class="pills" aria-label="Jump to a section">
         <a class="pill glass" href="#story" data-target="story">My story</a>
         <a class="pill glass" href="#experience" data-target="experience">Experience</a>
         <a class="pill glass" href="#education" data-target="education">Education</a>
         <a class="pill glass" href="#skills" data-target="skills">Skills</a>
-        <a class="pill glass cv-link" href="contact.html">Download CV</a>
+        <a class="pill pill-cv cv-link" href="contact.html">Download CV</a>
         <a id="pill-linkedin" class="pill glass" target="_blank" rel="noopener noreferrer" hidden>LinkedIn ↗</a>
         <a id="pill-newsletter" class="pill glass" target="_blank" rel="noopener noreferrer" hidden>Newsletter ↗</a>
-        <button id="copy-email" class="pill pill-outline" type="button" hidden>
+        <button id="copy-email" class="pill pill-dashed" type="button" hidden>
           <span>Reach me: <span id="email-text"></span></span>
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
         </button>
         <span id="copy-status" class="copy-status label" aria-live="polite"></span>
       </nav>
     </div>
-  </section>
+    <div class="ab-hint" aria-hidden="true"><span>SCROLL</span><i></i></div>
+  </div>
+</section>
 
+<!-- The About sections: in the right column on desktop (the photo stays on the left), full width on phones -->
+<div id="ab-sections" class="ab-sections">
   <!-- 2. My story -->
   <section id="story" class="wrap about-section reveal" aria-labelledby="story-h" tabindex="-1">
     <h2 id="story-h" class="label">My story</h2>
     <div class="about-body">
       <p id="positioning" class="positioning"><span class="skel t w80" aria-hidden="true"></span></p>
       <div id="bio" class="prose"><span class="skel skel-line w95" aria-hidden="true"></span><span class="skel skel-line w95" aria-hidden="true"></span><span class="skel skel-line w60" aria-hidden="true"></span></div>
+      <dl id="about-stats" class="stats"><div class="stat skel-stat" aria-hidden="true"><dt>00,000+</dt><dd>Combined following</dd></div><div class="stat skel-stat" aria-hidden="true"><dt>0M+</dt><dd>Impressions at peak</dd></div><div class="stat skel-stat" aria-hidden="true"><dt>000+</dt><dd>Posts published</dd></div></dl>
       <dl id="story-facts" class="story-facts"></dl>
     </div>
   </section>
@@ -137,8 +139,7 @@
       </div>
     </div>
   </section>
-  </div><!-- /about-content -->
-</div><!-- /about-layout -->
+</div><!-- /ab-sections -->
 </main>
 
 <!-- Certificate lightbox -->
@@ -156,8 +157,7 @@
 <script src="data/sample-data.js"></script>
 <script src="js/sheet.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/background.js"></script>
 <script src="js/about.js"></script>
-<script src="js/avatar.js"></script>
-<script src="js/face.js"></script>
 </body>
 </html>

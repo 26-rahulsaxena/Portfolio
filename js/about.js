@@ -1,12 +1,134 @@
-/* About page: typewriter greeting, section pills, story, experience, education,
+/* About page: the opening scroll scene (big name, photo docking left, typed headline), section pills, story, experience, education,
    skills, certificates (with a lightbox), testimonials, FAQ and the CV block. */
 (function () {
   var S = window.Sheet, esc = S.esc;
   var $ = function (id) { return document.getElementById(id); };
   var reduce = UI.reduceMotion;
 
-  /* ---------- 1. Typewriter greeting ---------- */
-  UI.typewrite($('type-text'), $('type-cursor'), 'Glad you stopped by. I\'m Rahul. What would you like to know?', 600);
+  /* ---------- 1. The opening scene ----------
+     One scroll listener and one animation loop that stops when idle. Scroll progress p (0 to 1 across the scene)
+     is smoothed, then drives: the names fading and drifting apart, the photo docking to the left (desktop) or
+     fading back (phones), and the headline appearing. Only transform, opacity and (on phones) filter change. */
+  var scene = $('ab-scene'), nl = $('ab-first'), nr = $('ab-last'), photo = $('ab-photo'), glow = $('ab-glow');
+  var head = $('ab-head'), hint = scene.querySelector('.ab-hint'), sections = $('ab-sections');
+  var narrow = matchMedia('(max-width: 760px)');
+  var asp = 622 / 900, geo = null, sy = 0, target = 0, cur = 0, raf = 0, wasNarrow = null;
+  function clamp(x, a, b) { return Math.min(b, Math.max(a, x)); }
+  function seg(p, a, b) { return clamp((p - a) / (b - a), 0, 1); }
+  function ease(t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+  // Layout reads happen only here: on load, on resize and when the page content changes size.
+  function measure() {
+    var n = narrow.matches, vw = innerWidth, vh = innerHeight;
+    if (n !== wasNarrow) { [photo, glow, nl, nr, head].forEach(function (el) { el.removeAttribute('style'); }); wasNarrow = n; }
+    var top = scene.getBoundingClientRect().top + scrollY, hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 70;
+    geo = { n: n, vw: vw, vh: vh, top: top, run: Math.max(1, scene.offsetHeight - vh),
+      end: sections.getBoundingClientRect().bottom + scrollY,              // where the page content ends
+      H0: Math.min(.92 * vh, vh - hdr - 10, 1100), H1: Math.min(.86 * vh, vh - hdr - 24, 820, .40 * vw / asp) }; // never under the header
+    geo.W0 = geo.H0 * 1.15; // the glow's width; its size and the photo's height come from the CSS (same formula)
+    read();
+  }
+  function read() { sy = scrollY; target = geo ? clamp((sy - geo.top) / geo.run, 0, 1) : 0; }
+
+  function draw() {
+    var p = cur, n = geo.n;
+    var fade = ease(seg(p, .22, .58));                 // names and (on phones) the photo fade back
+    var show = ease(seg(p, .36, .66));                 // the headline comes forward
+    var out = ease(seg(p, n ? .88 : .97, 1)), keep = 1 - out;
+    glow.style.opacity = ((1 - fade * (n ? .5 : 0)) * keep).toFixed(3);
+    if (n) {
+      photo.style.opacity = ((1 - fade * .8) * keep).toFixed(3);
+      photo.style.transform = 'translateX(-50%) scale(' + (1 + fade * .07).toFixed(3) + ')';
+      photo.style.filter = 'blur(' + (fade * 2.2).toFixed(2) + 'px) drop-shadow(0 0 1.5px var(--ab-rim)) drop-shadow(0 0 26px var(--ab-glow))';
+    } else {
+      var m = ease(seg(p, .2, .6)), c = geo.vw / 2 + (.22 * geo.vw - geo.vw / 2) * m;
+      var H = geo.H0 + (geo.H1 - geo.H0) * m, s = H / geo.H0;
+      var lift = Math.min(0, geo.end - sy - geo.vh).toFixed(1);   // the photo leaves together with the end of the page
+      photo.style.transform = 'translate(' + (c - H * asp / 2).toFixed(1) + 'px,' + lift + 'px) scale(' + s.toFixed(4) + ')';
+      glow.style.transform = 'translate(' + (c - geo.W0 * s / 2).toFixed(1) + 'px,' + lift + 'px) scale(' + s.toFixed(4) + ')';
+    }
+    var gone = ease(seg(p, .2, .42));                 // the names are fully gone as the headline appears
+    var dx = fade * (n ? 4 : 5.5), no = ((1 - gone) * keep).toFixed(3);
+    nl.style.opacity = nr.style.opacity = no;
+    nl.style.transform = 'translateX(' + (-dx).toFixed(2) + 'vw) scaleY(var(--ab-sy))';
+    nr.style.transform = 'translateX(' + dx.toFixed(2) + 'vw) scaleY(var(--ab-sy))';
+    head.style.opacity = (show * (n ? keep : 1)).toFixed(3);
+    head.style.transform = 'translateY(' + ((1 - show) * 34).toFixed(1) + 'px)';
+    head.style.pointerEvents = show > .5 ? 'auto' : 'none';
+    hint.style.opacity = (1 - ease(seg(p, 0, .12))).toFixed(3);
+    if (show > .25) startTyping();
+  }
+  function loop() {
+    cur += (target - cur) * .14;
+    if (Math.abs(target - cur) < .0004) cur = target;
+    draw();
+    raf = cur !== target ? requestAnimationFrame(loop) : 0;
+  }
+  function kick() { read(); if (!raf) raf = requestAnimationFrame(loop); }
+
+  // A keyboard user tabbing into the headline pills: bring the headline fully into view first.
+  head.addEventListener('focusin', function () {
+    finishTyping();
+    if (!reduce && geo && cur < .66) { scrollTo(0, geo.top + geo.run * .7); cur = target = .7; draw(); }
+  });
+
+  /* ---------- the headline types itself out once (shown at once on repeat visits and with reduced motion) ---------- */
+  var typing = 0, typed = false;
+  function lines() { return [$('hl1-ghost').textContent, $('hl2-ghost').textContent]; }
+  function finishTyping() {
+    if (typed) return;
+    typed = true; clearTimeout(typing);
+    var l = lines();
+    $('hl1').textContent = l[0]; $('hl2').textContent = l[1];
+    $('type-cursor').remove();
+    head.classList.add('typed');
+    try { localStorage.setItem('aboutTyped', '1'); } catch (e) {}
+  }
+  function startTyping() {
+    if (typing || typed) return;
+    var l = lines(), i = 0, total = l[0].length + l[1].length, cursor = $('type-cursor');
+    (function step() {
+      i++;
+      $('hl1').textContent = l[0].slice(0, i);
+      if (i > l[0].length) {
+        if (cursor.parentNode !== $('hl2').parentNode) $('hl2').parentNode.appendChild(cursor); // the cursor moves to line two
+        $('hl2').textContent = l[1].slice(0, i - l[0].length);
+      }
+      if (i < total) typing = setTimeout(step, 38); else finishTyping();
+    })();
+  }
+  var seenBefore = false;
+  try { seenBefore = !!localStorage.getItem('aboutTyped'); } catch (e) {}
+  if (reduce || seenBefore) finishTyping();
+
+  // The photo: your cut-out from config.js (HEAD_TURN.photo); a .png with the same name is tried if the .webp fails.
+  // If neither loads, an old "Photo Link" from the sheet is used, and failing that the silhouette stays.
+  var photoFailed = false;
+  function setPhoto(src, onFail) {
+    var img = new Image();
+    img.alt = 'Portrait of Rahul Saxena';
+    img.fetchPriority = 'high';
+    img.onload = function () {
+      if (img.naturalHeight) asp = img.naturalWidth / img.naturalHeight;
+      photo.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+      photo.replaceChildren(img);
+      if (geo) { measure(); kick(); }
+    };
+    img.onerror = onFail;
+    img.src = src;
+  }
+  (function () {
+    var cut = S.safeUrl(((window.CONFIG || {}).HEAD_TURN || {}).photo);
+    var tries = !cut ? [] : /\.webp$/i.test(cut) ? [cut, cut.replace(/\.webp$/i, '.png')] : [cut];
+    (function next() { if (tries.length) setPhoto(tries.shift(), next); else photoFailed = true; })();
+  })();
+
+  if (!reduce) {
+    measure(); cur = target; draw();
+    addEventListener('scroll', kick, { passive: true });
+    addEventListener('resize', function () { measure(); kick(); });
+    if ('ResizeObserver' in window) new ResizeObserver(function () { measure(); kick(); }).observe(sections);
+  }
 
   /* ---------- Pills: jump to a section ---------- */
   document.querySelector('.pills').addEventListener('click', function (e) {
@@ -94,14 +216,20 @@
       $('copy-email').hidden = false;
     }
 
-    // Photo: normally the cut-out from config.js (HEAD_TURN.photo). An old "Photo Link" row still works if present.
+    // Photo: only if the cut-out from config.js could not load, an old "Photo Link" row is used.
     var src = S.imageUrl(a['Photo Link']);
-    if (src) {
-      var img = new Image();
-      img.alt = 'Portrait of ' + name;
-      img.onload = function () { $('face-silhouette').replaceWith(img); if ($('face-caption')) $('face-caption').remove(); };
-      img.src = src;
-    }
+    if (src && photoFailed && $('face-silhouette')) setPhoto(src, function () {});
+
+    // The big names, and the headline lines: optional rows "Hero Line 1", "Hero Line 2", "Hero Subline" in the About tab
+    var parts = name.trim().split(/\s+/);
+    $('ab-first').textContent = parts[0];
+    $('ab-last').textContent = parts.slice(1).join(' ') || '';
+    [['hl1', a['Hero Line 1']], ['hl2', a['Hero Line 2']]].forEach(function (h) {
+      if (!h[1] || $(h[0] + '-ghost').textContent === h[1]) return;
+      $(h[0] + '-ghost').textContent = $(h[0] + '-sr').textContent = h[1];
+      if (typed) $(h[0]).textContent = h[1];
+    });
+    if (a['Hero Subline']) $('hero-sub').textContent = a['Hero Subline'];
 
     // My story
     $('positioning').textContent = a['Positioning Statement'] || '';

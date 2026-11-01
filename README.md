@@ -8,7 +8,7 @@ Plain HTML, CSS and JavaScript. No build step. Open `index.html` in a browser, o
 |---|---|
 | `index.html` | Home page: intro, featured work, research-calls ticker, latest work, one section per kind of work (Research, Models, Dashboards, Articles, Other; empty kinds hide), About teaser, then a full disclaimer (academic work, not investment advice) above the footer |
 | `projects.html`, `project.html` | All work, and one page per item |
-| `about.html` | About page: your portrait stays in place on the left while the greeting, story, experience, education, skills, certificates and testimonials scroll past on the right (one column on phones). Experience and Education are timelines, Certificates a list, and Testimonials glide from left to right (pause button; still for visitors who turn off motion) |
+| `about.html` | About page: opens with a scroll scene (your big name behind your photo; as you scroll, the photo docks to the left and the headline appears), then your story, experience, education, skills, certificates and testimonials on the right (one column on phones). See "About page scroll design" below |
 | `gallery.html` | Gallery page: a big photo slideshow at the top (slides from left to right every few seconds; left/right arrow buttons; pauses on hover and has a Pause button), then filters and photos and clips grouped by event (newest first), with a larger view and Previous/Next |
 | `contact.html` | Contact page: your details and a message form |
 | `404.html` | Shown by GitHub Pages for addresses that don't exist |
@@ -23,11 +23,11 @@ Plain HTML, CSS and JavaScript. No build step. Open `index.html` in a browser, o
 | `js/home.js` | Fills the Home page from the sheet |
 | `js/projects.js` | Projects page: filter chips, search, sort, "Show more", shareable links like `projects.html?type=research&q=pharma` |
 | `js/project.js` | Detail page (`project.html?type=...&id=...`): facts, call block, link buttons, sections and "More work" |
-| `js/about.js` | Fills the About page from the About, Experience, Skills, Certificates and Testimonials tabs. Education comes from Experience rows with Type = Education. Sections with no rows hide themselves |
+| `js/about.js` | Runs the About scroll scene and fills the page from the About, Experience, Skills, Certificates and Testimonials tabs. Education comes from Experience rows with Type = Education. Sections with no rows hide themselves |
 | `js/gallery.js` | Fills the Gallery page from the Gallery tab |
 | `js/contact.js` | Contact page: details from the About tab, form checks, sending, success and error messages |
-| `js/avatar.js` | Draws the illustrated avatar (an original character, in code). Used if your photo is missing, or when you choose `mode: 'avatar'` |
-| `js/face.js` | The moving portrait on the About page: connects the mouse (or finger drag on phones, or arrow keys) to your photo, photo frames, video or the avatar |
+| `js/avatar.js` | Draws an illustrated avatar. Not used by any page at the moment (kept in case you want it back) |
+| `js/face.js` | The old "turn my head with the mouse" portrait. Not used by any page at the moment (kept in case you want it back) |
 | `data/sample-data.js` | A saved copy of your sheet, used only by the Claude preview (which cannot read Google). The live site ignores it |
 | `assets/me.webp`, `assets/me.png` | Your portrait, cut out with a transparent background (the `.png` is a backup for very old browsers) |
 
@@ -105,67 +105,20 @@ Your portrait comes from `HEAD_TURN.photo` in `js/config.js`, not from the sheet
 - About values that start with "e.g." are treated as blank, so the default wording shows until you fill them in.
 - Google Drive image links are converted automatically so they display as pictures.
 
-## Your portrait on the About page
+## About page scroll design
 
-Your cut-out photo (`HEAD_TURN.photo`) stands directly on the page (no box) on both the Home page and the About page (on the left there), with a soft glow behind it and its bottom edge fading into the page. It is still by default (`move: false`); set `move: true` to make it follow the visitor's mouse. `HEAD_TURN.mode` in `js/config.js` chooses what is shown on the About page:
+The About page opens with a short scroll scene:
 
-| mode | What it shows |
-|---|---|
-| `'photo'` (current) | One cut-out photo, `photo: 'assets/me.webp'`. With `move: true` it tilts gently in 3D toward the cursor. One photo cannot truly turn the head; 9-12 photos can (see `'frames'`). |
-| `'frames'` | 9-12 cut-out photos of your head turning, e.g. `frames: ['assets/face/01.webp', ..., 'assets/face/12.webp']`. The head really turns toward the cursor. |
-| `'video'` | Your own head-turn video, e.g. `video: 'assets/face.mp4'`. Its edges fade softly into the page. |
-| `'avatar'` | The illustrated avatar, drawn in code. Change its look in `AVATAR` (skin, hair, eyes, blazer, tie, glasses). |
-| `''` | Off. A plain silhouette shows instead. |
+1. At the top, your cut-out photo stands large in the middle with a soft glow, and **RAHUL** and **SAXENA** sit behind it in huge, stretched letters that fade towards the bottom.
+2. As the visitor scrolls, the names fade and drift apart. On computers and tablets (wider than 760px) the photo shrinks and moves to the left column, and stays there while everything else scrolls on the right. On phones the photo fades back and blurs slightly instead.
+3. The headline types itself out on the right ("Student of the market." / "Always in session."), then the grey line and the shortcut pills appear. Repeat visitors, and visitors who turn off motion, see it at once.
+4. Your sections follow. **My story** now also shows your three headline numbers.
 
-With reduced motion on, nothing moves: your photo shows once, facing forward. If the photo file fails to load, the site quietly shows your still photo from the sheet, or the avatar if there is none.
+Visitors who turn off motion get everything stacked and still: the names, the photo, the headline, then the sections.
 
-### Replacing your photo later
-
-1. Remove the background with a free tool such as remove.bg or Adobe Express's free background remover, and download it as a **PNG** (transparent background).
-2. Crop it from just above your head to your chest or waist, about 900 px tall. Optionally convert it to WebP (for example with squoosh.app) to make it smaller.
-3. Upload it to `assets/` on GitHub with the same name (`me.webp` or `me.png`), or set `photo:` in `js/config.js` to the new name.
-
-### Changing the avatar's look
-
-```js
-AVATAR: { skin: '#D9A27A', hair: '#1F1612', eyes: '#4A2E1F', blazer: '#25406B', tie: '#C9A24B', glasses: false }
-```
-
-Colours are `#rrggbb`. Change a value, save, reload. `glasses: true` adds round dark glasses.
-
-## Recording your own head-turn (optional)
-
-**Shooting**
-- Phone on a stable surface at eye level, plain background, soft even light from the front (a window works).
-- Shoulders square to the camera, dressed as you would for an interview.
-- Start looking at your **left shoulder**, then turn slowly through the camera to your **right shoulder**: one smooth movement of about 3-4 seconds, head height steady.
-- First frame = turned to the viewer's left, middle = straight ahead, last = turned to the viewer's right.
-- No broad smile, no hands in the frame.
-
-**Video (preferred)**
-About 480x560, 24-30 fps, no audio, and every frame a keyframe so scrubbing is smooth. With [ffmpeg](https://ffmpeg.org):
-
-```
-ffmpeg -i input.mov -vf "crop=ih*480/560:ih,scale=480:560" -an -c:v libx264 -g 1 -crf 26 -pix_fmt yuv420p -movflags +faststart assets/face.mp4
-```
-
-Keep the file **under about 3 MB**. If it is bigger, shorten the clip, lower the frame rate (add `-r 24`) or raise `-crf` to 28-30. Without ffmpeg, a free online "MP4 compressor" works, but scrubbing may feel rough.
-
-**Stills (if the video feels rough)**
-10-12 JPEGs, same crop and size, 60-120 KB each, named `01.jpg`, `02.jpg` ... in `assets/face/`. To extract them from your video:
-
-```
-ffmpeg -i input.mov -vf "fps=3,crop=ih*480/560:ih,scale=480:560" -q:v 4 assets/face/%02d.jpg
-```
-
-**Turning it on**: put the files in `assets/`, then edit `HEAD_TURN` in `js/config.js` and reload.
-
-```js
-// Video
-HEAD_TURN: { mode: 'video', photo: '', video: 'assets/face.mp4', frames: [] }
-
-// Stills
-HEAD_TURN: { mode: 'frames', photo: '', video: '', frames: ['assets/face/01.jpg', 'assets/face/02.jpg', 'assets/face/03.jpg', /* ... */ 'assets/face/12.jpg'] }
-```
-
-GitHub Pages serves these files as they are; nothing else needs to change.
+**What you can change**
+- **Headline wording (optional sheet rows):** add rows `Hero Line 1`, `Hero Line 2` and `Hero Subline` to the About tab. Without them the defaults show.
+- **Photo:** it comes from `HEAD_TURN.photo` in `js/config.js` (now a still picture on About; the mouse "turn my head" effect is retired).
+- **How long the scene lasts:** in `css/styles.css`, search for `--ab-scene`. `260vh` (computers) and `320vh` (phones) are the scroll distance; smaller numbers make the scene shorter.
+- **How tall the names are:** in the same place, `--ab-sy` is the stretch: `3.2` on computers, `2.3` on phones. Use `1` for normal letters, or a smaller number such as `2.6` for less stretch.
+- **When things happen:** in `js/about.js`, in the function `draw`, the pairs of numbers such as `seg(p, .22, .58)` say when an effect starts and ends (0 = top of the scene, 1 = its end).

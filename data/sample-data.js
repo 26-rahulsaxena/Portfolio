@@ -397,6 +397,18 @@ window.SAMPLE_DATA = {
   {
    "Field": "Stat 3",
    "Value": "100+ | Posts published"
+  },
+  {
+   "Field": "Hero Line 1",
+   "Value": "Student of the market."
+  },
+  {
+   "Field": "Hero Line 2",
+   "Value": "Always in session."
+  },
+  {
+   "Field": "Hero Subline",
+   "Value": "Finance student · Equity research · New Delhi"
   }
  ]
 };

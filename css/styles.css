@@ -296,7 +296,7 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 .portrait .badge span { color: var(--accent); }
 
 .name { font-size: clamp(40px, 6vw, 76px); font-weight: 800; letter-spacing: -0.025em; line-height: 0.98; margin: 8px 0 14px; }
-.tagline { font-size: clamp(16px, 1.6vw, 19px); color: var(--text-2); font-weight: 500; max-width: 34ch; }
+.tagline { font-size: clamp(16px, 1.6vw, 19px); color: var(--text-2); font-weight: 500; } /* one line where it fits */
 
 .open-to { padding: 16px 20px; display: grid; gap: 4px; }
 .open-to p:last-child { font-size: 18px; font-weight: 700; }
@@ -371,7 +371,7 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* Page header */
 .page-head { padding-top: 40px; padding-bottom: 28px; display: grid; gap: 12px; }
 .page-head h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; letter-spacing: -0.02em; } /* one line where it fits */
-.lede { color: var(--text-2); font-size: 17px; max-width: 60ch; }
+.lede { color: var(--text-2); font-size: 17px; } /* one line where it fits */
 
 /* Controls: chips, search, sort */
 .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
@@ -452,13 +452,6 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* ==========================================================
    ABOUT PAGE
    ========================================================== */
-/* Hero: intro on the left, face stage on the right */
-.about-hero {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
-  gap: 48px; align-items: center; min-height: 620px; padding-block: 32px 48px;
-}
-.about-intro { display: grid; gap: 22px; align-content: center; }
-.greeting { font-size: clamp(34px, 5vw, 60px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; }
 .type-box { display: grid; }
 .type-ghost, .type-live { grid-area: 1 / 1; }
 .type-ghost { visibility: hidden; } /* reserves the final height, so nothing jumps while typing */
@@ -596,7 +589,6 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 #lb-img { width: 100%; height: auto; border-radius: 10px; }
 
 @media (max-width: 900px) {
-  .about-hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 36px; }
   .face-frame { max-width: 400px; }
   .about-section { grid-template-columns: minmax(0, 1fr); }
 }
@@ -680,7 +672,6 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
    The portrait stands directly on the page: no border or panel,
    a soft navy glow behind, and the bottom fading into the page.
    ========================================================== */
-.about-intro { position: relative; z-index: 1; }             /* text always sits on top and stays clickable */
 .face-frame {
   max-width: 470px; aspect-ratio: 622 / 900; border: 0; border-radius: 0; background: none; overflow: visible;
   /* other media (avatar, video, placeholder) fade out softly at the edges instead of showing a box */
@@ -713,24 +704,6 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
   .face-frame { max-width: 420px; }
 }
 
-/* About layout: photo column on the left stays in place (sticky) while the content column scrolls.
-   Phones: greeting first, then the photo, then the sections, in one column. */
-.about-content .wrap { max-width: none; padding-left: 0; padding-right: 0; } /* the layout already has the side gutter */
-.about-content .about-hero { grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 901px) {
-  .about-layout { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 56px; align-items: start; }
-  .about-photo { position: sticky; top: calc(var(--header-h) + 24px); }
-  /* never taller than the window, so the whole photo stays visible while scrolling */
-  .about-photo .face-frame { max-width: min(400px, calc((100vh - var(--header-h) - 48px) * 622 / 900)); margin-inline: auto; }
-  .about-content .about-section { grid-template-columns: 150px minmax(0, 1fr); gap: 16px 32px; }
-}
-@media (max-width: 900px) {
-  .about-layout { display: flex; flex-direction: column; }
-  .about-content { display: contents; }
-  .about-content > * { order: 2; }
-  .about-content > .about-hero { order: 0; padding-bottom: 0; }
-  .about-photo { order: 1; margin-top: 24px; }
-}
 
 /* Home: the cut-out photo without a box, same look as the About page. */
 .portrait.is-cutout { border: 0; border-radius: 0; overflow: visible; background: radial-gradient(closest-side at 50% 42%, color-mix(in srgb, var(--border) 90%, transparent), transparent 100%); }
@@ -953,7 +926,6 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 .stats .stat { display: grid; gap: 2px; min-width: 0; }
 .stats dt { font: 600 20px/1.2 var(--mono); font-variant-numeric: tabular-nums; color: var(--text); }
 .stats dd { margin: 0; font-size: 13px; color: var(--text-2); }
-.about-intro .stats { margin: 4px 0 18px; }
 @media (max-width: 640px) { .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 16px; } .stats dt { font-size: 18px; } }
 .load-note { color: var(--muted); padding-top: 8px; padding-bottom: 8px; text-transform: none; }
 
@@ -1038,4 +1010,113 @@ body:not(:has(.site-header)) { padding-top: var(--header-h); }
 @media (prefers-reduced-motion: reduce) {
   .nav-pill { transition: none; }
   .dl-go .dl-arrow, .dl-done .dl-tick, .send-btn .plane, .send-btn .send-label { animation: none !important; }
+}
+
+/* ==========================================================
+   ABOUT PAGE: the scroll scene (big name, photo docks to the left)
+   The numbers that shape it live in js/about.js (scene timing) and here:
+   --ab-scene (how long the scene lasts), --ab-sy (how tall the names are stretched).
+   ========================================================== */
+.page-about { --ab-col: 44vw; --ab-scene: 260vh; --ab-sy: 3.2; --ab-glow: color-mix(in srgb, var(--accent) 28%, transparent); --ab-rim: color-mix(in srgb, var(--accent) 50%, transparent); }
+.ab-scene { position: relative; height: var(--ab-scene); margin-top: calc(-1 * var(--header-h)); } /* starts under the see-through header */
+.ab-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.ab-name {
+  position: absolute; z-index: 1; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -0.04em; line-height: .85;
+  font-size: clamp(56px, min(12.4vw, 22vh), 250px); color: var(--text); white-space: nowrap;
+  top: calc(29vh - .425em); transform-origin: 50% 0; transform: scaleY(var(--ab-sy)); will-change: transform, opacity;
+  -webkit-mask-image: linear-gradient(#000 30%, transparent 97%); mask-image: linear-gradient(#000 30%, transparent 97%);
+  pointer-events: none; user-select: none;
+}
+.ab-name.ab-l { left: clamp(14px, 2.4vw, 44px); }
+.ab-name.ab-r { right: clamp(14px, 2.4vw, 44px); }
+.ab-glow {
+  position: absolute; z-index: 1; left: 50%; bottom: -6vh; width: min(90vw, 980px); height: 92vh; transform: translateX(-50%);
+  background: radial-gradient(closest-side, var(--ab-glow), transparent 72%); pointer-events: none; will-change: transform, opacity;
+}
+.ab-photo {
+  position: absolute; z-index: 2; left: 50%; bottom: 0; height: min(92vh, 100vh - var(--header-h) - 10px, 1100px); aspect-ratio: 622 / 900; transform: translateX(-50%);
+  filter: drop-shadow(0 0 1.5px var(--ab-rim)) drop-shadow(0 0 26px var(--ab-glow)); will-change: transform, opacity, filter;
+}
+.ab-photo img, .ab-photo svg { display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%;
+  -webkit-mask-image: linear-gradient(#000 82%, transparent 100%); mask-image: linear-gradient(#000 82%, transparent 100%); }
+.ab-head {
+  position: absolute; z-index: 3; inset: var(--header-h) 0 0 0; display: grid; place-content: center; justify-items: center;
+  text-align: center; gap: 18px; padding: 0 var(--gutter); opacity: 0; will-change: opacity, transform;
+}
+.ab-greet { font-size: clamp(24px, min(4vw, 7.4vw), 56px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; text-wrap: nowrap; }
+.ab-greet .ab-l1, .ab-greet .ab-l2 { display: block; white-space: nowrap; }
+.ab-greet .ab-l2 { color: var(--accent); }
+.ab-sub { color: var(--muted); font-size: 15px; margin-top: -4px; }
+.ab-head .pills { justify-content: center; max-width: 760px; animation: none; }
+.ab-head .ab-sub, .ab-head .pills { transition: opacity .35s ease, transform .35s ease; }
+.ab-head:not(.typed) .ab-sub, .ab-head:not(.typed) .pills { opacity: 0; transform: translateY(8px); } /* appear once the headline has typed */
+.pill-cv { background: var(--accent); color: var(--on-accent); }
+.pill-cv:hover { background: var(--accent-hover); }
+.pill-dashed { background: transparent; border: 1.5px dashed var(--border); color: var(--text-2); cursor: pointer; }
+.pill-dashed:hover { border-color: var(--accent); color: var(--text); }
+.pill-dashed svg { color: var(--accent); flex: none; }
+.pill-dashed > span { overflow-wrap: anywhere; }
+.ab-hint {
+  position: absolute; z-index: 4; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; flex-direction: column;
+  align-items: center; gap: 8px; font: 500 11px/1 var(--mono); letter-spacing: .2em; color: var(--muted);
+}
+.ab-hint i { width: 1px; height: 34px; background: linear-gradient(var(--accent), transparent); animation: ab-drip 1.8s ease-in-out infinite; }
+@keyframes ab-drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+/* the sections that follow: one column, the small label above its content */
+.ab-sections { position: relative; z-index: 4; padding: 24px var(--gutter) 0; }
+.ab-sections .wrap { max-width: none; padding-left: 0; padding-right: 0; }
+.ab-sections .about-section { grid-template-columns: minmax(0, 1fr); gap: 12px; scroll-margin-top: calc(var(--header-h) + 16px); }
+.ab-sections .about-section:first-child { margin-top: 0; }
+#story .stats { margin: 24px 0 0; }
+#story .stats dt { font-size: clamp(22px, 2.4vw, 30px); }
+
+/* the loader on this page sits at the bottom centre, where the photo already fades into the page, so it never covers
+   the face or the names; a soft glow in the page colour around the digits keeps them readable (no box) */
+.page-about .loader { inset: auto 0 84px 0; height: auto; }
+.page-about .loader-num { font-size: 40px; text-shadow: 0 0 2px var(--page), 0 0 8px var(--page), 0 0 18px var(--page), 0 0 30px var(--page); }
+.page-about .loader-num::before { content: none; }
+
+/* desktop: the photo docks to the left and stays there while the page scrolls on the right */
+@media (min-width: 761px) {
+  /* drawn in the centre before the script runs, exactly where the script starts it (nothing jumps) */
+  .ab-photo { position: fixed; left: 0; transform-origin: 0 100%; transform: translateX(calc(50vw - 50%)); }
+  .ab-glow { position: fixed; left: 0; transform-origin: 0 100%; transform: translateX(calc(50vw - 50%));
+    width: calc(min(92vh, 100vh - var(--header-h) - 10px, 1100px) * 1.15); height: calc(min(92vh, 100vh - var(--header-h) - 10px, 1100px) * 1.05); }
+  .ab-head { left: var(--ab-col); place-content: center start; justify-items: start; text-align: left; padding: 0 var(--gutter) 0 0; }
+  .ab-head .pills { justify-content: flex-start; }
+  .ab-sections { margin-left: var(--ab-col); padding-left: 0; }
+}
+/* phones: names stacked at the top, the photo fades back, the content takes the whole width */
+@media (max-width: 760px) {
+  .page-about { --ab-scene: 320vh; --ab-sy: 2.3; --ab-col: 0px; }
+  .ab-name { font-size: 20.5vw; }
+  .ab-name.ab-l { top: calc(var(--header-h) + 1.5vh); }
+  .ab-name.ab-r { top: calc(var(--header-h) + 1.5vh + 30vw); }
+  .ab-photo { height: 66vh; }
+  .page-about .loader-num { font-size: 32px; }
+}
+/* short windows and landscape phones: smaller names and headline so nothing overlaps */
+@media (max-height: 560px) {
+  .page-about { --ab-sy: 2.4; }
+  .ab-head { gap: 10px; }
+  .ab-greet { font-size: clamp(22px, min(3.4vw, 7vh), 40px); }
+  .ab-head .pills { gap: 6px; }
+  .ab-head .pill { padding: 0 14px; font-size: 14px; }
+  .ab-hint { display: none; }
+}
+
+/* reduced motion: no pinning, fading or stretching; everything simply stacked */
+@media (prefers-reduced-motion: reduce) {
+  .ab-scene { height: auto; margin-top: 0; }
+  .ab-stage { position: relative; height: auto; overflow: visible; display: flex; flex-wrap: wrap; justify-content: center; }
+  .ab-name, .ab-photo, .ab-glow, .ab-head { position: relative; inset: auto; transform: none !important; opacity: 1 !important; filter: none; }
+  .ab-name, .ab-name.ab-l, .ab-name.ab-r { display: inline-block; margin: 32px .14em 0; top: auto; left: auto; right: auto; -webkit-mask-image: none; mask-image: none; font-size: clamp(40px, 9vw, 110px); }
+  .ab-glow, .ab-hint { display: none; }
+  .ab-photo { flex: 0 0 100%; min-width: 0; max-width: 100%; height: 70vh; width: auto; margin: 0 auto; left: auto; aspect-ratio: auto; display: flex; justify-content: center; }
+  .ab-photo img, .ab-photo svg { width: auto; max-width: 100%; } /* never wider than a phone screen */
+  .ab-head { flex: 0 0 100%; padding: 32px var(--gutter) 8px; place-content: center; justify-items: center; text-align: center; left: auto; }
+  .ab-head .pills { justify-content: center; }
+  .ab-sections { margin-left: 0; padding-left: var(--gutter); }
+  .ab-head:not(.typed) .ab-sub, .ab-head:not(.typed) .pills { opacity: 1; transform: none; }
 }

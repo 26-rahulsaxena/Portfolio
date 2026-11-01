@@ -36,9 +36,9 @@ Your sheet is already connected: the `js/config.js` inside `portfolio-site.zip` 
 
 When a chat gives you changed files, upload only those (Add file > Upload files, into the same folder, then Commit). If one of them is `config.js`, make sure it says `USE_LOCAL_SAMPLE: false`: the copy used by the Claude preview says `true` and would make your site show the preview's saved copy of your sheet instead of the live one.
 
-## 5. Head-turn face
+## 5. About page
 
-Follow **"Recording your head-turn"** in `README.md`.
+The About page opens with a scroll scene using your photo from `assets/me.webp`. To change its headline, add the optional rows `Hero Line 1`, `Hero Line 2` and `Hero Subline` to the About tab (see "About page scroll design" in `README.md`).
 
 ## 6. Connect the contact form (free, no code)
 
@@ -69,7 +69,6 @@ Check the free plan limits on Formspree's site. No password or key goes into the
 | A project doesn't show | Check `Show` = `Yes`, the date is `yyyy-mm-dd`, it is in the right tab, and the tab names were not renamed. |
 | A Drive image or file doesn't show | In Drive, set sharing to **Anyone with the link**. |
 | Sheet changes don't appear | Wait five minutes, then hard refresh (Ctrl+Shift+R, or Cmd+Shift+R on Mac). Make sure the link you pasted is the CSV one. |
-| The head-turn video stutters | Re-encode it with the command in README.md, or use stills instead. |
 | The form says "not switched on yet" | `CONTACT_FORM_URL` in `js/config.js` is empty. Do step 6. |
 | Sheet changes never appear, even after 10 minutes | `USE_LOCAL_SAMPLE` is `true` in `js/config.js` (the preview copy was uploaded). On GitHub, open `js/config.js`, click the pencil, change `true` to `false`, commit. |
 | Gallery photos are grey tiles | That Drive photo is not shared publicly. In Drive: right-click > Share > **Anyone with the link** (Viewer). |
